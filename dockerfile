@@ -28,4 +28,4 @@ COPY . .
 EXPOSE 3000
 
 # Use npm start (which in turn should call your "python" command as needed)
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
