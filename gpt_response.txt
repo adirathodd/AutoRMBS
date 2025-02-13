@@ -1,0 +1,25 @@
+Here are the extracted details from the provided text:
+
+- **Closing Date**: 2/1/2000
+- **First Payment Date**: 3/1/2000
+- **Day Count System**: 30/360
+- **Payment Frequency**: Monthly
+- **Fixed Prepayment Rate**: 30.00%
+- **Default Rate**: 20.00%
+- **Recoverable**: 90.00%
+- **Initial Asset Balance**: ($550,462,191)
+- **Current Prepaid Balance**: ($550,462,191)
+- **Asset Amortization Type**: Fixed
+- **WA Fixed Rate**: 3.866%
+- **Loss Multiple**: 1.00
+- **Base Losses**: 0.30%
+- **Original Term**: 360
+- **Remaining Term**: 360
+- **Discount Rate**: 3.866%
+- **WA Original Amortization Term**: 100 Months
+- **WA Original Balloon Payment Month**: (300)
+- **WA Original Interest Only Period**: 48 Months
+- **WA Original Interest Capitalization Period**: 0 Months
+- **WALA**: 5 Months
+- **Recoveries Lag**: 6.00 months
+- **Description**: Pool 1
