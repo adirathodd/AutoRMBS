@@ -1,81 +1,79 @@
 <!DOCTYPE html>
-<html data-wf-page="67919278d1b4484a4818ef60" data-wf-site="67919278d1b4484a4818ef0c">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Login</title>
-  <meta content="Login" property="og:title">
-  <meta content="Login" property="twitter:title">
-  <meta content="width=device-width, initial-scale=1" name="viewport">
-  <link href="css/normalize.css" rel="stylesheet" type="text/css">
-  <link href="css/webflow.css" rel="stylesheet" type="text/css">
-  <link href="css/autormbs-ai.webflow.css" rel="stylesheet" type="text/css">
+  <title>Login | AutoRMBS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Include the common stylesheet -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet" type="text/css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-  <div class="navigation w-nav">
+  <!-- Navigation Bar (Inspired by Webflow) -->
+  <div class="navigation" role="banner">
     <div class="navigation-wrap">
-      <a href="index.html" class="logo-link w-nav-brand">
+      <a href="index.html" aria-current="page" class="logo-link">
         <div class="text-block">AutoRMBS</div>
       </a>
       <div class="menu">
-        <nav role="navigation" class="navigation-items w-nav-menu">
-          <a href="about.html" class="navigation-item w-nav-link">About</a>
-          <a href="inputs.html" class="navigation-item w-nav-link">Work</a>
-          <a href="contact.html" class="navigation-item w-nav-link">Contact</a>
+        <nav role="navigation">
+          <a href="about.html" class="navigation-item">About</a>
+          <a href="inputs.html" class="navigation-item">Work</a>
+          <a href="contact.html" class="navigation-item">Contact</a>
         </nav>
-        <div class="menu-button w-nav-button"><img src="images/menu-icon_1menu-icon.png" width="22" alt="" class="menu-icon"></div>
       </div>
-      <a href="login.html" id="auth-button" class="primary-button cc-contact-us w-inline-block">
-        <div>LOG IN</div>
+      <a href="login.html" class="primary-button">
+        <div>LOG IN</div>
       </a>
     </div>
   </div>
 
-  <div class="section cc-home-wrap">
-    <div class="intro-header cc-subpage">
-      <div class="intro-content">
-        <div class="heading-jumbo">Login</div>
-      </div>
-    </div>
-  </div>
+  <!-- Hero Section -->
+  <section class="hero" style="background: linear-gradient(rgba(0,40,85,0.75), rgba(0,40,85,0.75)), url('images/login-bg.jpg') center/cover no-repeat;">
+    <div class="heading-jumbo">Login</div>
+  </section>
 
-  <div class="section">
-    <div class="w-form">
-      <form id="login-form">
-        <label for="email">Email address</label>
-        <input class="w-input" maxlength="256" name="email" id="email" type="email" required>
-        
-        <label for="password">Password</label>
-        <input class="w-input" maxlength="256" name="password" id="password" type="password" required>
-        
-        <input type="submit" class="w-button" value="Log In">
+  <!-- Login Form Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="heading-jumbo-small">Welcome Back</h2>
+      <p class="paragraph-light">Please log in to access your account and manage your RMBS workflows.</p>
+
+      <form id="login-form" class="contact-form">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" class="form-input" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="primary-button">Log In</button>
       </form>
 
       <div id="login-error" style="display:none; color: red; margin-top: 10px;">
         Invalid email or password.
       </div>
     </div>
-  </div>
+  </section>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       document.getElementById("login-form").addEventListener("submit", function (event) {
         event.preventDefault();
-        
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
-        
         // Example credentials validation (replace with actual)
         if (email === "admin@gmail.com" && password === "1234") {
           localStorage.setItem("loggedIn", "true");
           localStorage.setItem("userEmail", email);
-          window.location.href = "inputs.html";  // Redirect to the inputs page
+          window.location.href = "inputs.html";
         } else {
           document.getElementById("login-error").style.display = "block";
         }
       });
     });
   </script>
-
 </body>
 </html>
