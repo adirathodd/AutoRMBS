@@ -186,7 +186,7 @@ if __name__ == "__main__":
 
     PDF_PATH = sys.argv[1]
     
-    PDF_PATH = "rmbs_file_scrape.pdf"
+    # PDF_PATH = "rmbs_file_scrape.pdf"
     AZURE_API_KEY = os.getenv("API_KEY")
     AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
     DEPLOYMENT_ID = os.getenv("DEPLOYMENT_NAME")
