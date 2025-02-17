@@ -121,7 +121,7 @@ dollar_pattern = re.compile(r'^\$\s*[\d,]+(\.\d+)?$')   # e.g. "$ 550,462,191", 
 percent_pattern = re.compile(r'^[\d,]+(\.\d+)?%$')      # e.g. "12%", "12.34%", "1,234.56%"
 numeric_pattern = re.compile(r'^[\d,]+(\.\d+)?$')       # e.g. "1234", "1,234.56", "1234.56"
 
-def save_to_excel(data_dict, template_file="template-2.xlsx", output_file="output.xlsx"):
+def save_to_excel(data_dict, template_file="excel_templates/template-2.xlsx", output_file="output.xlsx"):
     """
     1) Open 'template_file' and activate the sheet named 'Inputs'.
     2) Search all cells in 'Inputs' for a matching key from data_dict.
@@ -179,13 +179,7 @@ def save_to_excel(data_dict, template_file="template-2.xlsx", output_file="outpu
 
     wb.save(output_file)
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print(json.dumps({'error': 'No PDF path provided'}))
-        sys.exit(1)
-
-    PDF_PATH = sys.argv[1]
-    
+def scrape(PDF_PATH):
     # PDF_PATH = "rmbs_file_scrape.pdf"
     AZURE_API_KEY = os.getenv("API_KEY")
     AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
@@ -193,5 +187,6 @@ if __name__ == "__main__":
     API_VERSION = os.getenv("API_VERSION")
 
     json_output = pdf_to_json(PDF_PATH, AZURE_API_KEY, AZURE_ENDPOINT, DEPLOYMENT_ID, API_VERSION)
-    print(json.dumps(json_output, indent=4))
-    save_to_excel(json_output)
+    save_to_excel(json_output, output_file=PDF_PATH + "excel.xlsx")
+
+    return json.dumps(json_output, indent=4)  
