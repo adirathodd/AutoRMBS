@@ -207,4 +207,4 @@ def scrape(PDF_PATH, username):
     json_output = pdf_to_json(PDF_PATH, AZURE_API_KEY, AZURE_ENDPOINT, DEPLOYMENT_ID, API_VERSION)
     save_to_excel(json_output, output_file=f"downloads/{username}/output.xlsx")
 
-    return json.dumps(json_output, indent=4)  
+    return json_output 

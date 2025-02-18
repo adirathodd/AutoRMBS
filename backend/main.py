@@ -10,11 +10,21 @@ import bcrypt
 from jose import JWTError, jwt
 from dotenv import load_dotenv
 from scrape import scrape
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # -----------------------------------------------------------------------------
 # FastAPI instance
 # -----------------------------------------------------------------------------
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify your React app's URL, e.g. "http://localhost:3000"
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 load_dotenv()
 
 # -----------------------------------------------------------------------------
