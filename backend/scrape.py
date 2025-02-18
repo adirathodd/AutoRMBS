@@ -5,7 +5,6 @@ import os
 from dotenv import load_dotenv
 import re
 from openpyxl import load_workbook
-import sys
 
 load_dotenv()
 
@@ -121,7 +120,12 @@ dollar_pattern = re.compile(r'^\$\s*[\d,]+(\.\d+)?$')   # e.g. "$ 550,462,191", 
 percent_pattern = re.compile(r'^[\d,]+(\.\d+)?%$')      # e.g. "12%", "12.34%", "1,234.56%"
 numeric_pattern = re.compile(r'^[\d,]+(\.\d+)?$')       # e.g. "1234", "1,234.56", "1234.56"
 
-def save_to_excel(data_dict, template_file="excel_templates/template-2.xlsx", output_file="output.xlsx"):
+# Assuming you have these precompiled patterns already defined:
+dollar_pattern = re.compile(r"^\$\s*[\d,]+(?:\.\d+)?$")
+percent_pattern = re.compile(r"^[\d,]+(?:\.\d+)?\s*%$")
+numeric_pattern = re.compile(r"^[\d,]+(?:\.\d+)?$")
+
+def save_to_excel(data_dict, output_file, template_file="excel_templates/template.xlsx", ):
     """
     1) Open 'template_file' and activate the sheet named 'Inputs'.
     2) Search all cells in 'Inputs' for a matching key from data_dict.
@@ -129,7 +133,8 @@ def save_to_excel(data_dict, template_file="excel_templates/template-2.xlsx", ou
        - If it starts with "$" (optional spaces allowed), parse as float and apply currency format.
        - If it ends with "%", parse as float/100 and apply percentage format.
        - If it's strictly numeric (with optional commas/decimal), parse as float.
-       - Otherwise, write as text.
+       - Otherwise, if the value contains digits mixed with words, remove the non-numeric characters and parse as float.
+       - If no digits are found, write as text.
     4) Save the modified workbook as 'output_file'.
     """
     wb = load_workbook(template_file)
@@ -166,7 +171,7 @@ def save_to_excel(data_dict, template_file="excel_templates/template-2.xlsx", ou
                         out_cell.number_format = '0.00%'
                         continue
 
-                    # 3) Generic numeric
+                    # 3a) Generic numeric (exactly matching numeric pattern)
                     if numeric_pattern.match(raw_value):
                         numeric_str = raw_value.replace(",", "")
                         numeric_val = float(numeric_str)
@@ -174,19 +179,32 @@ def save_to_excel(data_dict, template_file="excel_templates/template-2.xlsx", ou
                         out_cell.number_format = 'General'
                         continue
 
-                    # 4) Fallback to text
-                    out_cell.value = raw_value
+                    # 3b) Mixed value with words: if any digits are present, remove non-numeric characters
+                    if any(char.isdigit() for char in raw_value):
+                        # This regex keeps digits, the decimal point, and a possible minus sign
+                        cleaned_str = re.sub(r"[^\d\.\/\-]", "", raw_value)
+                        try:
+                            numeric_val = float(cleaned_str)
+                            out_cell.value = numeric_val
+                            out_cell.number_format = 'General'
+                        except ValueError:
+                            # If conversion fails, fallback to the original text
+                            out_cell.value = raw_value
+                        continue
 
+                    # 4) Fallback to text if no digits are found
+                    out_cell.value = raw_value
+    
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
     wb.save(output_file)
 
-def scrape(PDF_PATH):
-    # PDF_PATH = "rmbs_file_scrape.pdf"
+def scrape(PDF_PATH, username):
     AZURE_API_KEY = os.getenv("API_KEY")
     AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
     DEPLOYMENT_ID = os.getenv("DEPLOYMENT_NAME")
     API_VERSION = os.getenv("API_VERSION")
 
     json_output = pdf_to_json(PDF_PATH, AZURE_API_KEY, AZURE_ENDPOINT, DEPLOYMENT_ID, API_VERSION)
-    save_to_excel(json_output, output_file=PDF_PATH + "excel.xlsx")
+    save_to_excel(json_output, output_file=f"downloads/{username}/output.xlsx")
 
     return json.dumps(json_output, indent=4)  

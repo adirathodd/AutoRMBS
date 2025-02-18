@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional, Any
 from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from supabase import create_client, Client
 import bcrypt
@@ -181,65 +182,6 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
     return Token(access_token=access_token, token_type="bearer")
 
 # -----------------------------------------------------------------------------
-# Protected Route
-# -----------------------------------------------------------------------------
-@app.get("/profile")
-def get_user_profile(current_user: User = Depends(get_current_user)):
-    """
-    Example of a protected route. The current user is extracted from the JWT.
-    """
-    return {
-        "user_id": current_user.id,
-        "username": current_user.username,
-        "email": current_user.email,
-        "first_name": current_user.first_name,
-        "last_name": current_user.last_name,
-    }
-
-# -----------------------------------------------------------------------------
-# PDF Scrape Endpoint
-# -----------------------------------------------------------------------------
-@app.post("/scrape")
-async def scrape_pdf(file: UploadFile = File(...), current_user: Any = Depends(get_current_user)):
-    """
-    Protected endpoint that:
-    - Accepts a PDF file upload.
-    - Saves the file to 'uploads/{username}/{PDF_FILE}'.
-    - Returns the JSON result.
-    """
-
-    if not file.filename.lower().endswith(".pdf"):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only PDF files are allowed."
-        )
-
-    username = current_user.username
-    user_uploads_folder = os.path.join("uploads", username)
-    os.makedirs(user_uploads_folder, exist_ok=True)
-
-    save_path = os.path.join(user_uploads_folder, file.filename)
-
-    try:
-        with open(save_path, "wb") as buffer:
-            buffer.write(await file.read())
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error saving uploaded file: {str(e)}"
-        )
-
-    try:
-        result = scrape(save_path)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error during PDF scraping: {str(e)}"
-        )
-
-    return {"scrape_result": result}
-
-# -----------------------------------------------------------------------------
 # Register Endpoint
 # -----------------------------------------------------------------------------
 @app.post("/register")
@@ -292,3 +234,82 @@ def register_user(user: RegisterUser):
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
     return {"message": "User registered successfully."}
+
+# -----------------------------------------------------------------------------
+# Protected Routes
+# -----------------------------------------------------------------------------
+@app.get("/profile")
+def get_user_profile(current_user: User = Depends(get_current_user)):
+    """
+    Example of a protected route. The current user is extracted from the JWT.
+    """
+    return {
+        "user_id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "first_name": current_user.first_name,
+        "last_name": current_user.last_name,
+    }
+
+# -----------------------------------------------------------------------------
+# PDF Scrape Endpoint
+# -----------------------------------------------------------------------------
+@app.post("/scrape")
+async def scrape_pdf(file: UploadFile = File(...), current_user: Any = Depends(get_current_user)):
+    """
+    Protected endpoint that:
+    - Accepts a PDF file upload.
+    - Saves the file to 'uploads/{username}/{PDF_FILE}'.
+    - Returns the JSON result.
+    """
+
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files are allowed."
+        )
+
+    username = current_user.username
+    user_uploads_folder = os.path.join("uploads", username)
+    os.makedirs(user_uploads_folder, exist_ok=True)
+
+    save_path = os.path.join(user_uploads_folder, file.filename)
+
+    try:
+        with open(save_path, "wb") as buffer:
+            buffer.write(await file.read())
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error saving uploaded file: {str(e)}"
+        )
+
+    try:
+        result = scrape(save_path, username)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error during PDF scraping: {str(e)}"
+        )
+
+    return {"scrape_result": result}
+
+# -----------------------------------------------------------------------------
+# Excel download Endpoint
+# -----------------------------------------------------------------------------
+@app.get("/download")
+async def download(current_user: Any = Depends(get_current_user)):
+    username = current_user.username
+    if not username:
+        raise HTTPException(status_code=400, detail="User not found.")
+    
+    file_path = f"downloads/{username}/output.xlsx"
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Excel file not found.")
+    
+    return FileResponse(
+        path=file_path,
+        filename="output.xlsx",
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
