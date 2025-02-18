@@ -11,7 +11,7 @@ from jose import JWTError, jwt
 from dotenv import load_dotenv
 from scrape import scrape
 from fastapi.middleware.cors import CORSMiddleware
-
+import shutil
 
 # -----------------------------------------------------------------------------
 # FastAPI instance
@@ -323,3 +323,25 @@ async def download(current_user: Any = Depends(get_current_user)):
         filename="output.xlsx",
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
+# -----------------------------------------------------------------------------
+# Logout and delete files (upload, download)
+# -----------------------------------------------------------------------------
+@app.post("/logout")
+async def download(current_user: Any = Depends(get_current_user)):
+    username = current_user.username
+    if not username:
+        raise HTTPException(status_code=400, detail="User not found.")
+    
+    downloads = f"downloads/{username}"
+    uploads = f"uploads/{username}"
+    
+    for directory in (downloads, uploads):
+        if os.path.exists(directory) and os.path.isdir(directory):
+            try:
+                shutil.rmtree(directory)
+                print(f"Deleted directory: {directory}")
+            except Exception as e:
+                print(f"Error deleting {directory}: {e}")
+        else:
+            print(f"Directory {directory} does not exist.")

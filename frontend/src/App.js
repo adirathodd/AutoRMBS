@@ -7,7 +7,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Upload from './pages/Upload';
+import Upload from './pages/Work';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';

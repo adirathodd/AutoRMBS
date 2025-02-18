@@ -15,10 +15,11 @@ function Login() {
     data.append('password', password);
 
     try {
+      setError('');
       const response = await axios.post('http://localhost:8000/login', data, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
-      console.log('Login response:', response.data);
+
       if (response.data && response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
         navigate('/profile');
@@ -45,6 +46,7 @@ function Login() {
               <label>Username</label>
               <input 
                 type="text" 
+                className="form-input"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter your username" 
@@ -54,6 +56,7 @@ function Login() {
               <label>Password</label>
               <input 
                 type="password"
+                className="form-input"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password" 

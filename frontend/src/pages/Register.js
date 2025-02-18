@@ -8,12 +8,11 @@ function Register() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // FastAPI register endpoint expects JSON payload
     const payload = {
       username,
       email,
@@ -22,14 +21,14 @@ function Register() {
       last_name: lastName
     };
     try {
+      setError('');
       await axios.post('http://localhost:8000/register', payload);
-      setMessage('User registered successfully. Please login.');
       setTimeout(() => {
         navigate('/login');
-      }, 2000);
+      }, 500);
     } catch (err) {
       console.error(err);
-      setMessage('Registration failed: ' + (err.response?.data.detail || 'Unknown error'));
+      setError('Registration failed: ' + (err.response?.data.detail || 'Unknown error'));
     }
   };
 
@@ -40,11 +39,12 @@ function Register() {
       </section>
       <section className="section">
         <div className="container">
-          {message && <p>{message}</p>}
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label>Username</label>
               <input 
+              className="form-input"
                 type="text" 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -54,6 +54,7 @@ function Register() {
             <div className="form-group">
               <label>Email</label>
               <input 
+                className="form-input"
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -63,6 +64,7 @@ function Register() {
             <div className="form-group">
               <label>First Name</label>
               <input 
+                className="form-input"
                 type="text" 
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -71,6 +73,7 @@ function Register() {
             <div className="form-group">
               <label>Last Name</label>
               <input 
+                className="form-input"
                 type="text" 
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -79,6 +82,7 @@ function Register() {
             <div className="form-group">
               <label>Password</label>
               <input 
+                className="form-input"
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
