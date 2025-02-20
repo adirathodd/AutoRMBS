@@ -10,6 +10,7 @@ function Register() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,7 +23,7 @@ function Register() {
     };
     try {
       setError('');
-      await axios.post('http://localhost:8000/register', payload);
+      await axios.post(`${API_URL}/register`, payload);
       setTimeout(() => {
         navigate('/login');
       }, 500);

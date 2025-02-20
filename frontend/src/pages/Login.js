@@ -7,6 +7,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ function Login() {
 
     try {
       setError('');
-      const response = await axios.post('http://localhost:8000/login', data, {
+      const response = await axios.post(`${API_URL}/login`, data, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
 

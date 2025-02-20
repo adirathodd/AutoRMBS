@@ -5,11 +5,12 @@ function Profile() {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState('');
   const token = localStorage.getItem('token');
-
+  const API_URL = process.env.REACT_APP_BACKEND_URL;
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/profile', {
+        const response = await axios.get(`${API_URL}/profile`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProfile(response.data);

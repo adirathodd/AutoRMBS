@@ -2,12 +2,14 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+
 function Header() {
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    axios.post('http://localhost:8000/logout', {}, {
+    axios.post(`${API_URL}/logout`, {}, {
       headers: {
         Authorization: `Bearer ${token}`
       }

@@ -5,8 +5,10 @@ function Upload() {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [error1, setError1] = useState('');
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem('token');
+  const API_URL = process.env.REACT_APP_BACKEND_URL;
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -22,7 +24,7 @@ function Upload() {
     formData.append('file', file);
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/scrape', formData, {
+      const response = await axios.post(`${API_URL}/scrape`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`
@@ -38,13 +40,15 @@ function Upload() {
   };
 
   const handleDownload = async () => {
+    setError1('');
     try {
-      const response = await axios.get('http://localhost:8000/download', {
+      const response = await axios.get(`${API_URL}/download`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
         responseType: 'blob'
       });
+
       // Create a blob URL for the downloaded file
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -55,7 +59,7 @@ function Upload() {
       link.remove();
     } catch (err) {
       console.error(err);
-      setError(err.response?.data.detail || 'Error downloading file');
+      setError1(err.response?.data.detail || 'Error downloading file');
     }
   };
 
@@ -94,6 +98,7 @@ function Upload() {
             </div>
           )}
           {/* Excel Download Button */}
+          {error1 && <p style={{ color: 'red' }}>{error1}</p>}
           {result && 
             <button 
             className="primary-button" 
