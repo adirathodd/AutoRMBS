@@ -20,7 +20,7 @@ function Profile() {
       }
     };
     fetchProfile();
-  }, [token]);
+  }, [token, API_URL]);
 
   return (
     <div>
