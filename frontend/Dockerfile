@@ -13,6 +13,6 @@ RUN npm install -g serve
 
 COPY --from=builder /app/build ./build
 
-EXPOSE 3000
+EXPOSE 80
 
-CMD ["serve", "-s", "build"]
+CMD ["serve", "-s", "build", "-l", "80"]

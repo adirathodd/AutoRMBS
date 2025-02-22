@@ -21,6 +21,8 @@ function Login() {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
 
+      console.log(response)
+      
       if (response.data && response.data.access_token) {
         localStorage.setItem('token', response.data.access_token);
         navigate('/profile');
